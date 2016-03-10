@@ -7,7 +7,7 @@ This example uses the helpful Node package [onoff](https://github.com/fivdi/onof
 
 ## Notes
 One advantage of using Node.js over the [Python example](https://github.com/scoobyshi/garagepy), is the non-blocking event driven nature of Node.
-This becomes important when interacting with the physical world as instructions are not always immediate and naturally asyncronous.  Additionally, if 
+This becomes important when interacting with the physical world as instructions are not always immediate, and are naturally more asyncronous.  Additionally, if 
 you are monitoring and initiating with several different interfaces at once (sensors, motors, etc) you may miss critical events in a blocking regime.
 
 - You will notice the use of the "onoff" optional parameter "debounceTimeout" (which in turn just uses Node.js setTimeout callback).  This is important 
