@@ -24,10 +24,10 @@ function movedoor() {
   console.log("Moving the door..");
 
   setTimeout(function() {
-    doormotor.write(0);
+    doormotor.write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
   },2000);
 
-  doormotor.write(1);
+  doormotor.write(0); // This will be executed first, to trigger relay
 }
 
 topsensor.watch(function (err, value) {
