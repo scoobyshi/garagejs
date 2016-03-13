@@ -10,7 +10,7 @@ var topsensor = new Gpio(23, 'in', 'falling', {debounceTimeout: 400});
 // The top sensor, closest to the relay, needs a slightly longer debounce timeout likely due to proximity and travel of signal (faster)
 var bottomsensor = new Gpio(17, 'in', 'falling', {debounceTimeout: 200});
 
-var topsensorTriggered, bottomsensorTriggered;
+var topsensorTriggered = false, bottomsensorTriggered = false;
 var garageChangeState = "Unknown", garageCurrentState = "Unknown";
 
 function cleanstop() {
@@ -64,7 +64,7 @@ bottomsensor.watch(function (err, value) {
     if (topsensorTriggered == true) {
       garageCurrentState = "Closed";
       garageChangeState = "Stationary";
-      topsensorTriggered == false;
+      topsensorTriggered = false;
 
       console.log("Garage is Closed");
     } else {
