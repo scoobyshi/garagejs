@@ -1,25 +1,34 @@
 var Gpio = require('onoff').Gpio;
+var config = require('./config');
+var topsensorTriggered = false, bottomsensorTriggered = false;
+var garageChangeState = "Unknown", garageCurrentState = "Unknown";
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
 
-// instead of "out", we use "high" to initialize the pin in a state that won't trigger the relay
-var doormotor = new Gpio(18, 'high');
+// Setup Motor
+var doormotor;
+(function setMotor() {
+  if (config.motor) {
+    doormotor = new Gpio(config.motor.pin, config.motor.status);
+    console.log("Setup Motor with GPIO Pin: ", config.motor.pin);
+  }
+}());
 
-// Note: a value of 0 implies a falling edge and 1 implies a rising edge.  When the magnet passes the sensor it will cause a falling edge
-var topsensor = new Gpio(23, 'in', 'falling', {debounceTimeout: 400});
-// The top sensor, closest to the relay, needs a slightly longer debounce timeout likely due to proximity and travel of signal (faster)
-var bottomsensor = new Gpio(17, 'in', 'falling', {debounceTimeout: 200});
+// Setup Sensors
+var doorsensor = [];
+(function setSensors() {
+  if (config.sensors) {
+    var i = 0;
+    Object.keys(config.sensors).forEach(function (sensor) {
+      var sens = config.sensors[sensor];
+      doorsensor[i] = new Gpio(sens.pin, sens.type, sens.edge, {debounceTimeout: sens.debounce});
+      // Move the watch functions here?
+      i += 1;
+    });
+  }
+}());
 
-var topsensorTriggered = false, bottomsensorTriggered = false;
-var garageChangeState = "Unknown", garageCurrentState = "Unknown";
-
-function cleanstop() {
-  doormotor.unexport();
-  topsensor.unexport();
-  bottomsensor.unexport();
-  console.log("Cleaned Up and Stopping.");
-}
-
+// Control the Door Motor
 function movedoor() {
   console.log("Moving the door..");
 
@@ -30,7 +39,7 @@ function movedoor() {
   doormotor.write(0); // This will be executed first, to trigger relay
 }
 
-topsensor.watch(function (err, value) {
+doorsensor[0].watch(function (err, value) {
   if (err) {
     throw err;
   }
@@ -53,7 +62,7 @@ topsensor.watch(function (err, value) {
   }
 });
 
-bottomsensor.watch(function (err, value) {
+doorsensor[1].watch(function (err, value) {
   if (err) {
     throw err;
   }
@@ -76,6 +85,7 @@ bottomsensor.watch(function (err, value) {
   }
 });
 
+// Provide a CLI
 console.log("Starting up and Waiting...");
 rl.setPrompt('Type "move" to trigger motor and Ctrl-C to exit> ');
 rl.prompt();
@@ -85,7 +95,13 @@ rl.on('line', function(line) {
   }  
   rl.prompt();
 }).on('SIGINT', function() {
-  cleanstop();
+  console.log("Cleaning Up and Stopping...");
+
+  doormotor.unexport();
+  doorsensor.forEach(function (sensor) {
+    sensor.unexport();
+  });
+
   process.exit(0);
 });
 

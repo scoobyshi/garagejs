@@ -1,0 +1,21 @@
+{
+  "motor": {
+    "pin": 18,
+    "status": "high"
+  },
+  "sensors": {
+    "topsensor": {
+      "pin": 23,
+      "type": "in",
+      "edge": "falling",
+      "debounce": 400
+    },
+    "bottomsensor": {
+      "pin": 17,
+      "type": "in",
+      "edge": "falling",
+      "debounce": 200
+    }
+  }
+}
+

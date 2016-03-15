@@ -12,7 +12,10 @@ you are monitoring and initiating with several different interfaces at once (sen
 
 - You will notice the use of the "onoff" optional parameter "debounceTimeout" (which in turn just uses Node.js setTimeout callback).  This is important 
 as you may experience "noise" from the switch that would otherwise indicate a false-positive change in state.  
-- I found a higher tolerance was required from the sensor closest to the motor and Pi, likely due to a slightly faster electrical change in state.
+- For the sensors: a value of 0 implies a falling edge and 1 implies a rising edge.  When the magnet passes the sensor it will cause a falling edge.
+- The actual switch, utilizing a relay, should be initialized "high"; If not specified it's possible on an unexpected restart of the Pi (eg power outage) that on startup of the app it may trigger the relay
+and you come home to find the door open! 
+- I found a higher tolerance was required from the sensor closest to the motor and Pi (the "Top" sensor), likely due to a slightly faster electrical change in state.
 
 ## Other Considerations
 - With this example, we could leverage existing projects like [Homebridge](https://github.com/nfarina/homebridge) and the 
