@@ -1,6 +1,7 @@
 var Gpio = require('onoff').Gpio;
 var config = require('./config');
 var topsensorTriggered = false, bottomsensorTriggered = false;
+var otherSensorTriggered = false;
 var garageChangeState = "Unknown", garageCurrentState = "Unknown";
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
@@ -51,10 +52,20 @@ doorsensor[0].watch(function (err, value) {
       garageCurrentState = "Open";
       garageChangeState = "Stationary";
       bottomsensorTriggered = false;
+      otherSensorTriggered = false;
       
       console.log("Garage is Open");
     } else {
+      if (garageCurrentState == "Closed")
+        garageChangeState = "Opening";
+      else if (garageCurrentState == "Open')
+        garageChangeState = "Closing"
+      else
+        garageChangeState = "Unknown";
+
+      console.log("Garage is ", garageChangeState);
       topsensorTriggered = true;
+      otherSensorTriggered = true;
       garageChangeState = "Closing";
       
       console.log("Garage is Closing");
@@ -75,12 +86,21 @@ doorsensor[1].watch(function (err, value) {
       garageChangeState = "Stationary";
       topsensorTriggered = false;
 
+      otherSensorTriggered = false;
+
       console.log("Garage is Closed");
     } else {
       bottomsensorTriggered = true;
-      garageChangeState = "Opening";
+      otherSensorTriggered = true;
 
-      console.log("Garage is Opening");
+      if (garageCurrentState == "Closed")
+        garageChangeState = "Opening";
+      else if (garageCurrentState == "Open')
+        garageChangeState = "Closing"
+      else
+        garageChangeState = "Unknown";
+
+      console.log("Garage is ", garageChangeState);
     }
   }
 });
