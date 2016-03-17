@@ -21,4 +21,4 @@ and you come home to find the door open!
 - With this example, we could leverage existing projects like [Homebridge](https://github.com/nfarina/homebridge) and the 
 underlying [HAPNode-JS](https://github.com/KhaosT/HAP-NodeJS) to enable Siri control and feedback (Done, example coming soon)
 - If you own a [Wink Hub](http://www.wink.com/products/wink-hub/), you could extend this example to interact with their API: http://docs.wink.apiary.io/
-- Initiate a text or Whatsapp message to indicate the door opening or closing
+- Run this as a server instead of a CLI and initiate a text or Whatsapp message to indicate the door opening or closing
