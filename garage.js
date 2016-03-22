@@ -48,23 +48,21 @@ doorsensor[0].watch(function (err, value) {
   if (value == false) {
     console.log("Triggered Top Sensor, Confirm value is ", value);
     
-    if (bottomsensorTriggered == true) { 
+    if (otherSensorTriggered == true) { 
       garageCurrentState = "Open";
       garageChangeState = "Stationary";
-      bottomsensorTriggered = false;
       otherSensorTriggered = false;
       
       console.log("Garage is Open");
     } else {
       if (garageCurrentState == "Closed")
         garageChangeState = "Opening";
-      else if (garageCurrentState == "Open')
+      else if (garageCurrentState == "Open")
         garageChangeState = "Closing"
       else
         garageChangeState = "Unknown";
 
       console.log("Garage is ", garageChangeState);
-      topsensorTriggered = true;
       otherSensorTriggered = true;
       garageChangeState = "Closing";
       
@@ -81,21 +79,19 @@ doorsensor[1].watch(function (err, value) {
   if (value == false) {
     console.log("Trigger Bottom Sensor, Confirm value is ", value);
 
-    if (topsensorTriggered == true) {
+    if (otherSensorTriggered == true) {
       garageCurrentState = "Closed";
       garageChangeState = "Stationary";
-      topsensorTriggered = false;
 
       otherSensorTriggered = false;
 
       console.log("Garage is Closed");
     } else {
-      bottomsensorTriggered = true;
       otherSensorTriggered = true;
 
       if (garageCurrentState == "Closed")
         garageChangeState = "Opening";
-      else if (garageCurrentState == "Open')
+      else if (garageCurrentState == "Open")
         garageChangeState = "Closing"
       else
         garageChangeState = "Unknown";
