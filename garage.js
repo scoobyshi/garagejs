@@ -28,6 +28,7 @@ var doorsensor = [];
     	  throw err;
   	}
 
+        // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
   	if (value == false) {
     	  console.log("Triggered Sensor ", sensor, ". Confirm value of state is ", value);
 
