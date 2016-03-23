@@ -23,7 +23,35 @@ var doorsensor = [];
     Object.keys(config.sensors).forEach(function (sensor) {
       var sens = config.sensors[sensor];
       doorsensor[i] = new Gpio(sens.pin, sens.type, sens.edge, {debounceTimeout: sens.debounce});
-      // Move the watch functions here?
+      doorsensor[i].watch(function (err, value) {
+    	if (err) {
+    	  throw err;
+  	}
+
+  	if (value == false) {
+    	  console.log("Triggered Sensor ", sensor, ". Confirm value of state is ", value);
+
+	  if (otherSensorTriggered == true) {
+
+ 	    // if Top sensor (0) triggered and Other previous, then must be Closed
+            // we could use garageChangeState, but it could be unknown since startup may be with door open or closed 
+      	    garageCurrentState = (sensor === "topsensor") ? "Open" : "Closed"; 
+
+            garageChangeState = "Stationary";
+            otherSensorTriggered = false;
+
+      	    console.log("Garage current state is ", garageCurrentState);
+    	  } else {
+      	    otherSensorTriggered = true;
+
+            // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is trigger we can determine/recover from unknown state
+	    garageChangeState = (sensor === "topsensor") ? "Closing" : "Opening"; 
+
+      	    console.log("Garage changing state is ", garageChangeState);
+    	  }
+  	}
+      });
+
       i += 1;
     });
   }
@@ -39,82 +67,6 @@ function movedoor() {
 
   doormotor.write(0); // This will be executed first, to trigger relay
 }
-
-// if self.this sensor 0 (top) and othersensor already triggered then Open else if this sensor 1 (bottom) and other then Closed  
-// Only an issue on startup since we don't know the state, unless we assume closed, or can detect which sensor
-
-doorsensor[0].watch(function (err, value) {
-  if (err) {
-    throw err;
-  }
-
-  if (value == false) {
-    console.log("Triggered Top Sensor, Confirm value is ", value);
-    
-    if (otherSensorTriggered == true) {
-
-      // if this.sensor is top (0) then Open, if bottom (1) then Closed
-      // garageCurrentState = (sensor === 0) ? "Open" : "Closed"; // if Top sensor (0) triggered and Other prev, must be Closed
-      garageCurrentState = (garageChangeState === "Opening") ? "Open" : "Closed";
-
-/*      if (garageChangeState == "Opening") 
-	garageCurrentState = "Open";
-      else // Closing
-	garageCurrentState = "Closed"; */
-
-      garageChangeState = "Stationary";
-      otherSensorTriggered = false;
-      
-      console.log("Garage current state is ", garageCurrentState);
-    } else {
-      otherSensorTriggered = true;
-      
-      // if this.sensor is top (0) then Closing, if bottom (1) then Opening
-      if (garageCurrentState == "Closed")
-        garageChangeState = "Opening";
-      else if (garageCurrentState == "Open")
-        garageChangeState = "Closing"
-      else
-        garageChangeState = "Unknown";
-     
-      console.log("Garage changing state is ", garageChangeState);
-    }
-  }
-});
-
-doorsensor[1].watch(function (err, value) {
-  if (err) {
-    throw err;
-  }
-
-  if (value == false) {
-    console.log("Trigger Bottom Sensor, Confirm value is ", value);
-
-    if (otherSensorTriggered == true) {
-
-      if (garageChangeState == "Opening")
-        garageCurrentState = "Open";
-      else // Closing
-        garageCurrentState = "Closed";
-
-      garageChangeState = "Stationary";
-      otherSensorTriggered = false;
-
-      console.log("Garage current state is ", garageCurrentState);
-    } else {
-      otherSensorTriggered = true;
-
-      if (garageCurrentState == "Closed")
-        garageChangeState = "Opening";
-      else if (garageCurrentState == "Open")
-        garageChangeState = "Closing"
-      else
-        garageChangeState = "Unknown";
-
-      console.log("Garage changing state is ", garageChangeState);
-    }
-  }
-});
 
 // Provide a CLI
 console.log("Starting up and Waiting...");
