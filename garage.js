@@ -1,8 +1,9 @@
 var Gpio = require('onoff').Gpio;
 var config = require('./config');
+var state = config.states;
 var otherSensorTriggered = false;
-var garageChangeState = "Unknown"; // 0 - Closing, 1 - Opening, 2 - Stationary; Initialize as Stationary
-var garageCurrentState = "Unknown"; // 0 - Closed, 1 - Open; Initialize as Closed
+var garageChangeState = state.STATIONARY; 
+var garageCurrentState = state.UNKNOWN; 
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -36,17 +37,17 @@ var doorsensor = [];
 
  	    // if Top sensor (0) triggered and Other previous, then must be Closed
             // we could use garageChangeState, but it could be unknown since startup may be with door open or closed 
-      	    garageCurrentState = (sensor === "topsensor") ? "Open" : "Closed"; 
+      	    garageCurrentState = (sensor === "topsensor") ? state.OPEN : state.CLOSED; 
 
-            garageChangeState = "Stationary";
+            garageChangeState = state.STATIONARY;
             otherSensorTriggered = false;
 
       	    console.log("Garage current state is ", garageCurrentState);
     	  } else {
       	    otherSensorTriggered = true;
 
-            // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is trigger we can determine/recover from unknown state
-	    garageChangeState = (sensor === "topsensor") ? "Closing" : "Opening"; 
+            // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
+	    garageChangeState = (sensor === "topsensor") ? state.CLOSING : state.OPENING; 
 
       	    console.log("Garage changing state is ", garageChangeState);
     	  }
