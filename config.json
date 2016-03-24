@@ -16,6 +16,14 @@
       "edge": "falling",
       "debounce": 200
     }
+  },
+  "states": {
+    "OPEN": "Open",
+    "CLOSED": "Closed",
+    "UNKNOWN": "Unknown",
+    "OPENING": "Opening",
+    "CLOSING": "Closing",
+    "STATIONARY": "Stationary"
   }
 }
 
