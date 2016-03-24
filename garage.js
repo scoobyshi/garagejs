@@ -4,8 +4,6 @@ var state = config.states;
 var otherSensorTriggered = false;
 var garageChangeState = state.STATIONARY; 
 var garageCurrentState = state.UNKNOWN; 
-const readline = require('readline');
-const rl = readline.createInterface(process.stdin, process.stdout);
 
 // Setup Motor
 var doormotor;
@@ -70,24 +68,5 @@ function movedoor() {
   doormotor.write(0); // This will be executed first, to trigger relay
 }
 
-// Provide a CLI
-console.log("Starting up and Waiting...");
-rl.setPrompt('Type "move" to trigger motor and Ctrl-C to exit> ');
-rl.prompt();
-rl.on('line', function(line) {
-  if (line == "move") {
-    movedoor();
-  }  
-  rl.prompt();
-}).on('SIGINT', function() {
-  console.log("Cleaning Up and Stopping...");
-
-  doormotor.unexport();
-  doorsensor.forEach(function (sensor) {
-    sensor.unexport();
-  });
-
-  process.exit(0);
-});
 
 
