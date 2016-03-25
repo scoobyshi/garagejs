@@ -12,12 +12,6 @@ rl.on('line', function(line) {
   }  
   rl.prompt();
 }).on('SIGINT', function() {
-  console.log("Cleaning Up and Stopping...");
-
-  garage.doormotor.unexport();
-  garage.doorsensor.forEach(function (sensor) {
-    sensor.unexport();
-  });
-
+  garage.cleanup();  
   process.exit(0);
 });

@@ -64,9 +64,19 @@ function movedoor() {
   setTimeout(function() {
     doormotor.write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
   },2000);
-
   doormotor.write(0); // This will be executed first, to trigger relay
 }
 
 
+exports.movedoor = movedoor;
 
+function cleanup() {
+  console.log("Cleaning up and Stopping...");
+
+  doormotor.unexport();
+  doorsensor.forEach(function (sensor) {
+    sensor.unexport();
+  });
+}
+
+exports.cleanup = cleanup;
