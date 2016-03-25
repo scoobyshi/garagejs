@@ -68,6 +68,7 @@ function movedoor() {
 }
 
 
+<<<<<<< HEAD
 exports.movedoor = movedoor;
 
 function cleanup() {
@@ -80,3 +81,6 @@ function cleanup() {
 }
 
 exports.cleanup = cleanup;
+=======
+
+>>>>>>> 5900172799039085d28a215e519d7d3f4577d34b

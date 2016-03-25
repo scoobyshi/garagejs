@@ -12,6 +12,16 @@ rl.on('line', function(line) {
   }  
   rl.prompt();
 }).on('SIGINT', function() {
+<<<<<<< HEAD
   garage.cleanup();  
+=======
+  console.log("Cleaning Up and Stopping...");
+
+  garage.doormotor.unexport();
+  garage.doorsensor.forEach(function (sensor) {
+    sensor.unexport();
+  });
+
+>>>>>>> 5900172799039085d28a215e519d7d3f4577d34b
   process.exit(0);
 });
