@@ -2,6 +2,8 @@
 A simple Node.js CLI example application using GPIO on a Raspberry Pi to control a device (in this case a garage door), 
 and receive input on attached sensors (existing reed switches that monitor the limits of the door movement).  
 
+![GaragePi](./img/GaragePiAndRelay.jpg?raw=true "Garage Pi and Relay")
+
 ## Dependencies
 This example uses the helpful Node package [onoff](https://github.com/fivdi/onoff), use `npm install onoff`.
 
