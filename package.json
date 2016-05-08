@@ -7,8 +7,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "scoobyshi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scoobyshi/garagejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/scoobyshi/garagejs/issues"
+  },
   "license": "GPL-3.0",
   "dependencies": {
-    "onoff": "1.0.4"
+    "dateformat": "^1.0.12",
+    "onoff": "^1.0.4"
   }
 }
