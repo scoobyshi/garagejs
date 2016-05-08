@@ -3,6 +3,9 @@
     "pin": 18,
     "status": "high"
   },
+  "camera": {
+    "enable": 1
+  },
   "sensors": {
     "topsensor": {
       "pin": 23,
@@ -18,12 +21,30 @@
     }
   },
   "states": {
-    "OPEN": "Open",
-    "CLOSED": "Closed",
-    "UNKNOWN": "Unknown",
-    "OPENING": "Opening",
-    "CLOSING": "Closing",
-    "STATIONARY": "Stationary"
+    "OPEN": {
+	"value": 0,
+	"desc": "Open"
+    },
+    "CLOSED": {
+	"value": 1,
+	"desc": "Closed"
+    },
+    "UNKNOWN": {
+	"value": 5,
+	"desc": "Unknown"
+    },
+    "OPENING": {
+	"value": 2,
+	"desc": "Opening"
+    },
+    "CLOSING": {
+	"value": 3,
+	"desc": "Closing"
+    },
+    "STATIONARY": {
+	"value": 4,
+	"desc": "Stopped"
+    }
   }
 }
 

@@ -3,6 +3,23 @@ var config = require('./config');
 var state = config.states;
 var otherSensorTriggered = false;
 var garageCurrentState = state.UNKNOWN; 
+var childproc = require('child_process');
+var dateForm = require('dateformat');
+var photonum = 0;
+
+function takePicture() {
+  var now = new Date();
+  now = dateForm(now, "isoDateTime");
+  var filename = 'photo/image_'+photonum+'_'+now+'.jpg';
+  var args = ['-w', '320', '-h', '240', '-o', filename, '-t', '1'];
+  // option with -t (in ms) important as otherwise default is 5s. vf,hf used to flip image if camera is upside down.
+  var spawn = childproc.spawn('raspistill', args);
+    
+  spawn.on('exit', function(code) {
+    console.log('Saved photo: ' + filename + ', Exit code: ' + code);
+    photonum++;
+  });
+}
 
 // Setup Motor
 var doormotor;
@@ -10,6 +27,9 @@ var doormotor;
   if (config.motor) {
     doormotor = new Gpio(config.motor.pin, config.motor.status);
     console.log("Setup Motor with GPIO Pin: ", config.motor.pin);
+    if (config.camera.enable) {    
+      takePicture();
+    }
   }
 }());
 
@@ -28,23 +48,24 @@ var doorsensor = [];
 
         // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
   	if (value == false) {
-    	  console.log("Triggered Sensor ", sensor, ". Confirm value of state is ", value);
+    	  console.log("Triggered Sensor ", sensor);
 
 	  if (otherSensorTriggered == true) {
 
  	    // if Top sensor (0) triggered and Other previous, then must be Closed
       	    garageCurrentState = (sensor === "topsensor") ? state.OPEN : state.CLOSED; 
-
             otherSensorTriggered = false;
-
-      	    console.log("Garage current state is ", garageCurrentState);
+      	    console.log("Garage current state is ", garageCurrentState.desc);
+	    
+	    if (config.camera.enable) {
+	      takePicture();
+            }	
     	  } else {
-      	    otherSensorTriggered = true;
 
             // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
 	    garageCurrentState = (sensor === "topsensor") ? state.CLOSING : state.OPENING; 
-
-      	    console.log("Garage changing state is ", garageCurrentState);
+      	    otherSensorTriggered = true;
+      	    console.log("Garage changing state is ", garageCurrentState.desc);
     	  }
   	}
       });
