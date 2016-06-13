@@ -1,0 +1,9 @@
+{ 
+  "smtp": {
+    "url": "smtp.gmail.com",
+    "user": "sender@email.com",
+    "pass": "eX4mple1",
+    "from": "Email Name <sender@email.com>",
+    "to": "recipient@email.com"
+  }
+}
