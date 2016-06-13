@@ -1,55 +1,10 @@
 var Gpio = require('onoff').Gpio;
 var config = require('./config');
-var configmail = require('./config.mail');
+var email = require('./lib/mailer');
+var camera = require('./lib/picture');
 var state = config.states;
 var otherSensorTriggered = false;
 var garageCurrentState = state.UNKNOWN; 
-
-var childproc = require('child_process');
-var dateForm = require('dateformat');
-var photonum = 0;
-
-function takePicture() {
-  var now = new Date();
-  now = dateForm(now, "isoDateTime");
-  var filename = 'photo/image_'+photonum+'_'+now+'.jpg';
-  var args = ['-w', '320', '-h', '240', '-o', filename, '-t', '1'];
-  // option with -t (in ms) important as otherwise default is 5s. vf,hf used to flip image if camera is upside down.
-  var spawn = childproc.spawn('raspistill', args);
-    
-  spawn.on('exit', function(code) {
-    console.log('Saved photo: ' + filename + ', Exit code: ' + code);
-    photonum++;
-  });
-  return filename;
-}
-
-var nodemailer = require('nodemailer');
-var transporter_url = 'smtps://'+configmail.smtp.user+':'+configmail.smtp.pass+'@'+configmail.smtp.url;
-var transporter = nodemailer.createTransport(transporter_url);
-
-function sendingMail(subj, picpath) {
-  var mailOptions = {
-    from: configmail.smtp.from, 
-    to: configmail.smtp.to, 
-    subject: subj, 
-    text: 'Status Update from Garage JS', 
-    html: '<b>Status Update from Garage JS</b>',
-    attachments: [
-      {
-        path: picpath,
-        encoding: 'base64'
-      }
-    ] 
-  };
-
-  transporter.sendMail(mailOptions, function(error, info){
-    if(error){
-        return console.log(error);
-    }
-    console.log('Message sent: ' + info.response + ' with filename: ' + picpath);
-  });
-}
 
 // Setup Motor
 var doormotor;
@@ -59,8 +14,8 @@ var doormotor;
     console.log("Setup Motor with GPIO Pin: ", config.motor.pin);
 
     if (config.camera.enable) {
-      var file = takePicture();
-      sendingMail("1L: Garage Setup and Ready", file);
+      var file = camera.takePicture();
+      email.sendingMail("1L: Garage Setup and Ready", file);
     }
 
   }
@@ -91,8 +46,8 @@ var doorsensor = [];
       	    console.log("Garage current state is ", garageCurrentState.desc);
 	    
 	    if (config.camera.enable) {
-	      var file = takePicture();
-              sendingMail("1L: Garage is now " + garageCurrentState.desc, file);
+	      var file = camera.takePicture();
+              email.sendingMail("1L: Garage is now " + garageCurrentState.desc, file);
             }	
     	  } else {
 
