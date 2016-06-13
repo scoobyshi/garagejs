@@ -6,6 +6,9 @@
   "camera": {
     "enable": 1
   },
+  "mail": {
+    "enable": 1
+  },
   "sensors": {
     "topsensor": {
       "pin": 23,

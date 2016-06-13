@@ -3,3 +3,6 @@ node_modules
 
 # Working Folder
 photo
+
+# Mail Config
+config.mail.json

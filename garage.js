@@ -1,8 +1,10 @@
 var Gpio = require('onoff').Gpio;
 var config = require('./config');
+var configmail = require('./config.mail');
 var state = config.states;
 var otherSensorTriggered = false;
 var garageCurrentState = state.UNKNOWN; 
+
 var childproc = require('child_process');
 var dateForm = require('dateformat');
 var photonum = 0;
@@ -19,6 +21,34 @@ function takePicture() {
     console.log('Saved photo: ' + filename + ', Exit code: ' + code);
     photonum++;
   });
+  return filename;
+}
+
+var nodemailer = require('nodemailer');
+var transporter_url = 'smtps://'+configmail.smtp.user+':'+configmail.smtp.pass+'@'+configmail.smtp.url;
+var transporter = nodemailer.createTransport(transporter_url);
+
+function sendingMail(subj, picpath) {
+  var mailOptions = {
+    from: configmail.smtp.from, 
+    to: configmail.smtp.to, 
+    subject: subj, 
+    text: 'Status Update from Garage JS', 
+    html: '<b>Status Update from Garage JS</b>',
+    attachments: [
+      {
+        path: picpath,
+        encoding: 'base64'
+      }
+    ] 
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if(error){
+        return console.log(error);
+    }
+    console.log('Message sent: ' + info.response + ' with filename: ' + picpath);
+  });
 }
 
 // Setup Motor
@@ -27,9 +57,12 @@ var doormotor;
   if (config.motor) {
     doormotor = new Gpio(config.motor.pin, config.motor.status);
     console.log("Setup Motor with GPIO Pin: ", config.motor.pin);
-    if (config.camera.enable) {    
-      takePicture();
+
+    if (config.camera.enable) {
+      var file = takePicture();
+      sendingMail("1L: Garage Setup and Ready", file);
     }
+
   }
 }());
 
@@ -58,7 +91,8 @@ var doorsensor = [];
       	    console.log("Garage current state is ", garageCurrentState.desc);
 	    
 	    if (config.camera.enable) {
-	      takePicture();
+	      var file = takePicture();
+              sendingMail("1L: Garage is now " + garageCurrentState.desc, file);
             }	
     	  } else {
 
