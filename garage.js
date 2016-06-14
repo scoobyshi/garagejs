@@ -1,25 +1,10 @@
 var Gpio = require('onoff').Gpio;
 var config = require('./config');
+var email = require('./lib/mailer');
+var camera = require('./lib/picture');
 var state = config.states;
 var otherSensorTriggered = false;
 var garageCurrentState = state.UNKNOWN; 
-var childproc = require('child_process');
-var dateForm = require('dateformat');
-var photonum = 0;
-
-function takePicture() {
-  var now = new Date();
-  now = dateForm(now, "isoDateTime");
-  var filename = 'photo/image_'+photonum+'_'+now+'.jpg';
-  var args = ['-w', '320', '-h', '240', '-o', filename, '-t', '1'];
-  // option with -t (in ms) important as otherwise default is 5s. vf,hf used to flip image if camera is upside down.
-  var spawn = childproc.spawn('raspistill', args);
-    
-  spawn.on('exit', function(code) {
-    console.log('Saved photo: ' + filename + ', Exit code: ' + code);
-    photonum++;
-  });
-}
 
 // Setup Motor
 var doormotor;
@@ -27,9 +12,14 @@ var doormotor;
   if (config.motor) {
     doormotor = new Gpio(config.motor.pin, config.motor.status);
     console.log("Setup Motor with GPIO Pin: ", config.motor.pin);
-    if (config.camera.enable) {    
-      takePicture();
+
+    if (config.camera.enable) {
+      var file = camera.takePicture();
+      if (config.mail.enable) {
+        email.sendingMail("1L: Garage Setup and Ready", file);
+      }
     }
+
   }
 }());
 
@@ -58,7 +48,10 @@ var doorsensor = [];
       	    console.log("Garage current state is ", garageCurrentState.desc);
 	    
 	    if (config.camera.enable) {
-	      takePicture();
+	      var file = camera.takePicture();
+              if (config.mail.enable) {
+                email.sendingMail("1L: Garage is now " + garageCurrentState.desc, file);
+              }
             }	
     	  } else {
 

@@ -17,6 +17,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "dateformat": "^1.0.12",
+    "nodemailer": "^2.3.2",
     "onoff": "^1.0.4"
   }
 }
