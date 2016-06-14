@@ -15,7 +15,9 @@ var doormotor;
 
     if (config.camera.enable) {
       var file = camera.takePicture();
-      email.sendingMail("1L: Garage Setup and Ready", file);
+      if (config.mail.enable) {
+        email.sendingMail("1L: Garage Setup and Ready", file);
+      }
     }
 
   }
@@ -47,7 +49,9 @@ var doorsensor = [];
 	    
 	    if (config.camera.enable) {
 	      var file = camera.takePicture();
-              email.sendingMail("1L: Garage is now " + garageCurrentState.desc, file);
+              if (config.mail.enable) {
+                email.sendingMail("1L: Garage is now " + garageCurrentState.desc, file);
+              }
             }	
     	  } else {
 
