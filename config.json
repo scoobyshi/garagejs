@@ -1,7 +1,15 @@
 {
   "motor": {
-    "pin": 18,
-    "status": "high"
+    "left": {
+      "name": "left",
+      "pin": 24,
+      "status": "high"
+    },
+    "right": {
+      "name": "right",
+      "pin": 18,
+      "status": "high"
+    }
   },
   "camera": {
     "enable": 1

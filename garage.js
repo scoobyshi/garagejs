@@ -7,11 +7,16 @@ var otherSensorTriggered = false;
 var garageCurrentState = state.UNKNOWN; 
 
 // Setup Motor
-var doormotor;
+var doormotor = [];
 (function setMotor() {
   if (config.motor) {
-    doormotor = new Gpio(config.motor.pin, config.motor.status);
-    console.log("Setup Motor with GPIO Pin: ", config.motor.pin);
+    var i = 0;
+    Object.keys(config.motor).forEach(function (motors) {
+      var mot = config.motor[motors];
+      doormotor[i] = new Gpio(mot.pin, mot.status);
+      console.log("Setup " + mot.name + "Motor with GPIO Pin: ", mot.pin);
+      i += 1;
+    });
 
     if (config.camera.enable) {
       var file = camera.takePicture();
@@ -69,13 +74,13 @@ var doorsensor = [];
 }());
 
 // Control the Door Motor
-function movedoor() {
+function movedoor(side) {
   console.log("Moving the door..");
 
   setTimeout(function() {
-    doormotor.write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
+    doormotor[side].write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
   },2000);
-  doormotor.write(0); // This will be executed first, to trigger relay
+  doormotor[side].write(0); // This will be executed first, to trigger relay
 }
 
 exports.movedoor = movedoor;
@@ -83,7 +88,9 @@ exports.movedoor = movedoor;
 function cleanup() {
   console.log("Cleaning up and Stopping...");
 
-  doormotor.unexport();
+  doormotor.forEach(function (motors) {
+    motors.unexport();
+  });
   doorsensor.forEach(function (sensor) {
     sensor.unexport();
   });
