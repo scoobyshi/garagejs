@@ -5,7 +5,7 @@ and receive input on attached sensors (existing reed switches that monitor the l
 ![GaragePi](./img/GaragePiAndRelay.jpg?raw=true "Garage Pi and Relay")
 
 ## Usage
-- You can run `node cli.js`, and type "move" to trigger the relay connected to your garage door, assuming you've followed instructions on setting 
+- You can run `node cli.js`, and follow the instructions to trigger the relay connected to your garage door, assuming you've followed instructions on setting 
 up the door (see [HomeForARest Garage Setup Part 1](https://homeforarest.info/2016/04/20/garage-of-things-part-1/))
 - You could include this package in your Node project with `npm install garage-js`.
 
