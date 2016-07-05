@@ -8,13 +8,14 @@ var garageCurrentState = state.UNKNOWN;
 
 // Setup Motor
 var doormotor = [];
+var doorlist = [];
 (function setMotor() {
   if (config.motor) {
     var i = 0;
     Object.keys(config.motor).forEach(function (motors) {
-      var mot = config.motor[motors];
-      doormotor[i] = new Gpio(mot.pin, mot.status);
-      console.log("Setup " + mot.name + "Motor with GPIO Pin: ", mot.pin);
+      doorlist[i] = config.motor[motors];
+      doormotor[i] = new Gpio(doorlist[i].pin, doorlist[i].status);
+      console.log("Setup " + doorlist[i].name + "Motor with GPIO Pin: ", doorlist[i].pin);
       i += 1;
     });
 
@@ -83,8 +84,6 @@ function movedoor(side) {
   doormotor[side].write(0); // This will be executed first, to trigger relay
 }
 
-exports.movedoor = movedoor;
-
 function cleanup() {
   console.log("Cleaning up and Stopping...");
 
@@ -96,10 +95,11 @@ function cleanup() {
   });
 }
 
-exports.cleanup = cleanup;
-
 function currentstate() {
   return garageCurrentState;
 }
 
 exports.currentstate = currentstate;
+exports.movedoor = movedoor;
+exports.cleanup = cleanup;
+exports.doorlist = doorlist;

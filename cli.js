@@ -4,12 +4,22 @@ const rl = readline.createInterface(process.stdin, process.stdout);
 
 // Provide a CLI
 console.log("Starting up and Waiting... ");
-rl.setPrompt('Type "move-left" or "move-right" to trigger motor and Ctrl-C to exit, the Current state is ' + garage.currentstate().desc + '> ');
+
+console.log("Available Doors:");
+garage.doorlist.forEach(function (door) {
+  console.log("Door ID " + door.id + ", use the name \"" + door.name + "\" to control the door on Pin: " + door.pin);
+});
+
+console.log("Commands:");
+console.log("  move door <id>");
+console.log("  check door <id>");
+
+rl.setPrompt('Enter Command or Ctrl-C to exit>');
 rl.prompt();
 rl.on('line', function(line) {
-  if (line == "move-left") {
+  if (line == "move door 1") {
     garage.movedoor(0);
-  } else if (line == "move-right") {
+  } else if (line == "move door 2") {
     garage.movedoor(1);
   }
   rl.prompt();

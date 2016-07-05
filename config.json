@@ -1,12 +1,16 @@
 {
   "motor": {
     "left": {
+      "id": 1,
       "name": "left",
+      "location_type": "left-side",
       "pin": 24,
       "status": "high"
     },
     "right": {
+      "id": 2,
       "name": "right",
+      "location_type": "right-side",
       "pin": 18,
       "status": "high"
     }
