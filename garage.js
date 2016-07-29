@@ -9,7 +9,9 @@ var garageCurrentState = state.UNKNOWN;
 // Setup Motor
 var doormotor = [];
 var doorlist = [];
+
 (function setMotor() {
+
   if (config.motor) {
     var i = 0;
     Object.keys(config.motor).forEach(function (motors) {
@@ -18,16 +20,21 @@ var doorlist = [];
       console.log("Setup " + doorlist[i].name + "Motor with GPIO Pin: ", doorlist[i].pin);
       i += 1;
     });
-
-    if (config.camera.enable) {
-      var file = camera.takePicture();
-      if (config.mail.enable) {
-        email.sendingMail("1L: Garage Setup and Ready", file);
-      }
-    }
-
+    sendNotification("1L: Garage Setup and Ready");
   }
+
 }());
+
+function sendNotification(subject) {
+  var file = '';
+
+  if (config.camera.enable) {
+    file = camera.takePicture();
+    }
+  if (config.mail.enable) {
+    email.sendingMail(subject, file);
+  }
+}
 
 // Setup Sensors
 var doorsensor = [];
@@ -53,12 +60,7 @@ var doorsensor = [];
             otherSensorTriggered = false;
       	    console.log("Garage current state is ", garageCurrentState.desc);
 	    
-	    if (config.camera.enable) {
-	      var file = camera.takePicture();
-              if (config.mail.enable) {
-                email.sendingMail("1L: Garage is now " + garageCurrentState.desc, file);
-              }
-            }	
+            sendNotification("1L: Garage is now " + garageCurrentState.desc);
     	  } else {
 
             // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
