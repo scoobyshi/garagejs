@@ -1,6 +1,6 @@
 {
   "name": "garage-js",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Garage Door Opener Tester using Node JS",
   "main": "garage.js",
   "scripts": {
