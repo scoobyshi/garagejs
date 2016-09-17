@@ -23,13 +23,13 @@
   },
   "sensors": {
     "topsensor": {
-      "pin": 23,
+      "pin": 25,
       "type": "in",
       "edge": "falling",
       "debounce": 400
     },
     "bottomsensor": {
-      "pin": 17,
+      "pin": 8,
       "type": "in",
       "edge": "falling",
       "debounce": 200
