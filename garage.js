@@ -4,7 +4,7 @@ var email = require('./lib/mailer');
 var camera = require('./lib/picture');
 var state = config.states;
 var otherSensorTriggered = false;
-var garageCurrentState = state.UNKNOWN; 
+var garageCurrentState = state.CLOSED; 
 
 // Setup Motor
 var doormotor = [];
