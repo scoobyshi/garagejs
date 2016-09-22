@@ -28,11 +28,18 @@ var doorlist = [];
 function sendNotification(subject) {
   var file = '';
 
-  if (config.camera.enable) {
-    file = camera.takePicture();
-    }
   if (config.mail.enable) {
-    email.sendingMail(subject, file);
+    if (config.camera.enable) {
+      setTimeout(function () {
+	console.log("Available Filename: " + file);
+        email.sendingMail(subject, file);
+      }, 5000);
+      file = camera.takePicture();
+    } else {
+      email.sendingMail(subject, file);
+    }
+  } else {
+    console.log("No Email Notification Subscribed!");
   }
 }
 
