@@ -1,18 +1,45 @@
 {
   "motor": {
-    "left": {
       "id": 1,
       "name": "left",
       "location_type": "left-side",
       "pin": 24,
-      "status": "high"
+      "status": "high",
+      "sensors": {
+          "position": "top",
+          "pin": 25,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 400 
+        },
+        { 
+          "position": "bottom",
+          "pin": 8,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 200 
+        }
     },
-    "right": {
+    {
       "id": 2,
       "name": "right",
       "location_type": "right-side",
       "pin": 18,
-      "status": "high"
+      "status": "high",
+      "sensors": {
+          "position": "top",
+          "pin": 23,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 400
+        },
+        {
+          "position": "bottom",
+          "pin": 17,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 200
+        }
     }
   },
   "camera": {
@@ -20,20 +47,6 @@
   },
   "mail": {
     "enable": 1
-  },
-  "sensors": {
-    "topsensor": {
-      "pin": 25,
-      "type": "in",
-      "edge": "falling",
-      "debounce": 400
-    },
-    "bottomsensor": {
-      "pin": 8,
-      "type": "in",
-      "edge": "falling",
-      "debounce": 200
-    }
   },
   "states": {
     "OPEN": {
