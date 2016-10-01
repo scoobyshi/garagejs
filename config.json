@@ -1,24 +1,24 @@
 {
-  "motor": {
+  "motor": [{
       "id": 1,
       "name": "left",
       "location_type": "left-side",
       "pin": 24,
       "status": "high",
-      "sensors": {
+      "sensors": [{
           "position": "top",
           "pin": 25,
           "type": "in",
           "edge": "falling",
-          "debounce": 400 
+          "debounce": 400
         },
-        { 
+        {
           "position": "bottom",
           "pin": 8,
           "type": "in",
           "edge": "falling",
-          "debounce": 200 
-        }
+          "debounce": 200
+        }]
     },
     {
       "id": 2,
@@ -26,7 +26,7 @@
       "location_type": "right-side",
       "pin": 18,
       "status": "high",
-      "sensors": {
+      "sensors": [{
           "position": "top",
           "pin": 23,
           "type": "in",
@@ -39,9 +39,8 @@
           "type": "in",
           "edge": "falling",
           "debounce": 200
-        }
-    }
-  },
+        }]
+    }],
   "camera": {
     "enable": 1
   },
