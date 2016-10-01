@@ -50,13 +50,15 @@ var doorsensor = [];
   var j = 0;
   Object.keys(config.motor).forEach(function (motor) {
 
-      if (config.motor[motor].sensor) {
+      if (config.motor[motor].sensors) {
           var i = 0;
           var lastchangetime = new Date();
 
           Object.keys(config.motor[motor].sensors).forEach(function (sensor) {
 
               var sens = config.motor[motor].sensors[sensor];
+	      console.log("Setup sensor ", sens.position, " on pin", sens.pin, " for motor", config.motor[motor].name);
+
               doorsensor[i] = new Gpio(sens.pin, sens.type, sens.edge, {debounceTimeout: sens.debounce});
               doorsensor[i].watch(function (err, value) {
 
@@ -73,7 +75,7 @@ var doorsensor = [];
 
                       // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
                       if (value == false) {
-                          console.log("Triggered Sensor ", sens.position, " on motor", motor.name, " at", new Date());
+                          console.log("Triggered Sensor ", sens.position, " on pin", sens.pin, " on motor", config.motor[motor].name, " at", new Date());
 
                           if (otherSensorTriggered == true) {
 
@@ -106,7 +108,7 @@ var doorsensor = [];
 
 // Control the Door Motor
 function movedoor(side) {
-  console.log("Moving the door..");
+  console.log("Moving the ", doorlist[side].name, " door..");
 
   setTimeout(function() {
     doormotor[side].write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
