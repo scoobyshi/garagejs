@@ -50,54 +50,58 @@ var doorsensor = [];
   var j = 0;
   Object.keys(config.motor).forEach(function (motor) {
 
-    if (config.motor[motor].sensor) {
-      var i = 0;
-      var lastchangetime = new Date();
+      if (config.motor[motor].sensor) {
+          var i = 0;
+          var lastchangetime = new Date();
 
-      Object.keys(config.motor[motor].sensors).forEach(function (sensor) {
-        
-        var sens = config.motor[motor].sensors[sensor];
-        doorsensor[i] = new Gpio(sens.pin, sens.type, sens.edge, {debounceTimeout: sens.debounce});
-        doorsensor[i].watch(function (err, value) {
-    	  if (err) {
-    	    throw err;
-  	}
+          Object.keys(config.motor[motor].sensors).forEach(function (sensor) {
 
-	// debounce helper - confirm we're not seeing another change within less than half a second (500ms), measured in ms
-	var currenttime = new Date();
-	console.log("Using debounce helper and checking time, current time: ", currenttime, " versus last change time: ", lastchangetime);
-	console.log("Difference is: ", currenttime - lastchangetime, "ms");
+              var sens = config.motor[motor].sensors[sensor];
+              doorsensor[i] = new Gpio(sens.pin, sens.type, sens.edge, {debounceTimeout: sens.debounce});
+              doorsensor[i].watch(function (err, value) {
 
-	if ((currenttime - lastchangetime) >= 500) {
+                  if (err) {
+                      throw err;
+                  }
 
-          // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
-  	  if (value == false) {
-    	    console.log("Triggered Sensor ", sens.position, " on motor", motor.name, " at", Date());
+                  // debounce helper - confirm we're not seeing another change within less than half a second (500ms), measured in ms
+                  var currenttime = new Date();
+                  console.log("Using debounce helper and checking time, current time: ", currenttime, " versus last change time: ", lastchangetime);
+                  console.log("Difference is: ", currenttime - lastchangetime, "ms");
 
-	    if (otherSensorTriggered == true) {
+                  if ((currenttime - lastchangetime) >= 500) {
 
- 	      // if Top sensor (0) triggered and Other previous, then must be Closed
-      	      garageCurrentState = (sensor === "topsensor") ? state.OPEN : state.CLOSED; 
-              otherSensorTriggered = false;
-      	      console.log("Garage current state is ", garageCurrentState.desc, " at", Date());     	      
+                      // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
+                      if (value == false) {
+                          console.log("Triggered Sensor ", sens.position, " on motor", motor.name, " at", new Date());
 
-              sendNotification("1L: Garage is now " + garageCurrentState.desc);
-    	    } else {
+                          if (otherSensorTriggered == true) {
 
-              // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
-	      garageCurrentState = (sensor === "topsensor") ? state.CLOSING : state.OPENING; 
-      	      otherSensorTriggered = true;
-      	      console.log("Garage changing state is ", garageCurrentState.desc, " at", Date());
-    	    }
+                              // if Top sensor (0) triggered and Other previous, then must be Closed
+                              garageCurrentState = (sensor === "topsensor") ? state.OPEN : state.CLOSED;
+                              otherSensorTriggered = false;
+                              console.log("Garage current state is ", garageCurrentState.desc, " at", new Date());
 
-	    lastchangetime = new Date();
-	  }
-  	}
-      });
+                              sendNotification("1L: Garage is now " + garageCurrentState.desc);
+                          } else {
 
-      i += 1;
-    });
-  }
+                              // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
+                              garageCurrentState = (sensor === "topsensor") ? state.CLOSING : state.OPENING;
+                              otherSensorTriggered = true;
+                              console.log("Garage changing state is ", garageCurrentState.desc, " at", new Date());
+                          }
+
+                          lastchangetime = new Date();
+                      }
+                  }
+              });
+
+              i += 1;
+          });
+      }
+
+      j += 1;
+  });
 }());
 
 // Control the Door Motor
