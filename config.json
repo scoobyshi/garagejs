@@ -1,11 +1,13 @@
 {
-  "motor": [{
+  "motor": [
+    {
       "id": 1,
       "name": "left",
       "location_type": "left-side",
       "pin": 24,
       "status": "high",
-      "sensors": [{
+      "sensors": [
+        {
           "position": "top",
           "pin": 25,
           "type": "in",
@@ -18,7 +20,8 @@
           "type": "in",
           "edge": "falling",
           "debounce": 200
-        }]
+        }
+      ]
     },
     {
       "id": 2,
@@ -26,7 +29,8 @@
       "location_type": "right-side",
       "pin": 18,
       "status": "high",
-      "sensors": [{
+      "sensors": [
+        {
           "position": "top",
           "pin": 23,
           "type": "in",
@@ -39,8 +43,10 @@
           "type": "in",
           "edge": "falling",
           "debounce": 200
-        }]
-    }],
+        }
+      ]
+    }
+  ],
   "camera": {
     "enable": 1
   },
@@ -49,28 +55,28 @@
   },
   "states": {
     "OPEN": {
-	"value": 0,
-	"desc": "Open"
+      "value": 0,
+      "desc": "Open"
     },
     "CLOSED": {
-	"value": 1,
-	"desc": "Closed"
+      "value": 1,
+      "desc": "Closed"
     },
     "UNKNOWN": {
-	"value": 5,
-	"desc": "Unknown"
+      "value": 5,
+      "desc": "Unknown"
     },
     "OPENING": {
-	"value": 2,
-	"desc": "Opening"
+      "value": 2,
+      "desc": "Opening"
     },
     "CLOSING": {
-	"value": 3,
-	"desc": "Closing"
+      "value": 3,
+      "desc": "Closing"
     },
     "STATIONARY": {
-	"value": 4,
-	"desc": "Stopped"
+      "value": 4,
+      "desc": "Stopped"
     }
   }
 }
