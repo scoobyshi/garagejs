@@ -85,7 +85,7 @@ var doorsensor = [];
                                 // if Top sensor (0) triggered and Other previous, then must be Closed
                                 doorlist[motor].garageCurrentState = (sens.position === "top") ? state.OPEN : state.CLOSED;
                                 doorlist[motor].otherSensorTriggered = false;
-                                console.log("Garage current state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
+                                console.log(doorlist[motor].name, "garage current state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
 
                                 sendNotification("1L: The " + doorlist[motor].name + " garage door is now " + doorlist[motor].garageCurrentState.desc);
                             } else {
@@ -93,7 +93,7 @@ var doorsensor = [];
                                 // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
                                 doorlist[motor].garageCurrentState = (sens.position === "top") ? state.CLOSING : state.OPENING;
                                 doorlist[motor].otherSensorTriggered = true;
-                                console.log("Garage changing state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
+                                console.log(doorlist[motor].name, "garage changing state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
                             }
 
                             doorlist[motor].lastchangetime = new Date();
