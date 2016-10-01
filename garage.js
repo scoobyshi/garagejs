@@ -3,8 +3,7 @@ var config = require('./config');
 var email = require('./lib/mailer');
 var camera = require('./lib/picture');
 var state = config.states;
-var otherSensorTriggered = false;
-var garageCurrentState = state.CLOSED; 
+var garageCurrentState = state.CLOSED;
 
 // Setup Motor
 var doormotor = [];
@@ -16,6 +15,8 @@ var doorlist = [];
     var i = 0;
     Object.keys(config.motor).forEach(function (motors) {
       doorlist[i] = config.motor[motors];
+      doorlist[i].otherSensorTriggered = false;
+      doorlist[i].garageCurrentState = state.CLOSED;
       doormotor[i] = new Gpio(doorlist[i].pin, doorlist[i].status);
       console.log("Setup " + doorlist[i].name + "Motor with GPIO Pin: ", doorlist[i].pin);
       i += 1;
@@ -52,12 +53,12 @@ var doorsensor = [];
 
       if (config.motor[motor].sensors) {
           var i = 0;
-          var lastchangetime = new Date();
+          doorlist[motor].lastchangetime = new Date();
 
           Object.keys(config.motor[motor].sensors).forEach(function (sensor) {
 
               var sens = config.motor[motor].sensors[sensor];
-	      console.log("Setup sensor ", sens.position, " on pin", sens.pin, " for motor", config.motor[motor].name);
+              console.log("Setup sensor ", sens.position, " on pin", sens.pin, " for motor", config.motor[motor].name);
 
               doorsensor[i] = new Gpio(sens.pin, sens.type, sens.edge, {debounceTimeout: sens.debounce});
               doorsensor[i].watch(function (err, value) {
@@ -67,33 +68,36 @@ var doorsensor = [];
                   }
 
                   // debounce helper - confirm we're not seeing another change within less than half a second (500ms), measured in ms
-                  var currenttime = new Date();
-                  console.log("Using debounce helper and checking time, current time: ", currenttime, " versus last change time: ", lastchangetime);
-                  console.log("Difference is: ", currenttime - lastchangetime, "ms");
+                  doorlist[motor].currenttime = new Date();
+                  console.log("Using debounce helper and checking time, current time: ", doorlist[motor].currenttime, " versus last change time: ", doorlist[motor].lastchangetime);
+                  console.log("Difference is: ", doorlist[motor].currenttime - doorlist[motor].lastchangetime, "ms");
 
-                  if ((currenttime - lastchangetime) >= 500) {
+                  if ((doorlist[motor].currenttime - doorlist[motor].lastchangetime) >= 500) {
 
                       // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
                       if (value == false) {
                           console.log("Triggered Sensor ", sens.position, " on pin", sens.pin, " on motor", config.motor[motor].name, " at", new Date());
 
-                          if (otherSensorTriggered == true) {
+                          // if doorlist[motor] / motor.otherSensorTriggered,
+                          // OR more explicitly if motor.sensor.top active or motor.sensor.bottom active?
+                          // garagecurrentstate[motor] to manage state for each?
+                          if (doorlist[motor].otherSensorTriggered == true) {
 
                               // if Top sensor (0) triggered and Other previous, then must be Closed
-                              garageCurrentState = (sensor === "topsensor") ? state.OPEN : state.CLOSED;
-                              otherSensorTriggered = false;
+                              garageCurrentState = (sens.position === "top") ? state.OPEN : state.CLOSED;
+                              doorlist[motor].otherSensorTriggered = false;
                               console.log("Garage current state is ", garageCurrentState.desc, " at", new Date());
 
                               sendNotification("1L: Garage is now " + garageCurrentState.desc);
                           } else {
 
                               // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
-                              garageCurrentState = (sensor === "topsensor") ? state.CLOSING : state.OPENING;
-                              otherSensorTriggered = true;
+                              garageCurrentState = (sens.position === "top") ? state.CLOSING : state.OPENING;
+                              doorlist[motor].otherSensorTriggered = true;
                               console.log("Garage changing state is ", garageCurrentState.desc, " at", new Date());
                           }
 
-                          lastchangetime = new Date();
+                          doorlist[motor].lastchangetime = new Date();
                       }
                   }
               });
