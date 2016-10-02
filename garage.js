@@ -152,5 +152,4 @@ function doors() {
 exports.currentstate = currentstate;
 exports.movedoor = movedoor;
 exports.cleanup = cleanup;
-exports.doorlist = doorlist;
 exports.doors = doors;

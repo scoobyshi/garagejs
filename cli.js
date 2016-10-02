@@ -6,7 +6,7 @@ const rl = readline.createInterface(process.stdin, process.stdout);
 console.log("Starting up and Waiting... ");
 
 console.log("Available Doors:");
-garage.doors.forEach(function (door) {
+garage.doors().forEach(function (door) {
     console.log("Door ID " + door);
 });
 
@@ -24,11 +24,9 @@ rl.on('line', function (line) {
     }
     rl.prompt();
 }).on('SIGINT', function () {
-    garage.doors.forEach(function (door) {
+    garage.doors().forEach(function (door) {
         console.log("Door ID " + door + " has status " + garage.currentstate(door).desc);
     });
-
-    garage.currentstate(1);
 
     garage.cleanup();
     process.exit(0);
