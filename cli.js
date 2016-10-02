@@ -18,9 +18,9 @@ rl.setPrompt("Enter Command or Ctrl-C to exit>");
 rl.prompt();
 rl.on('line', function (line) {
     if (line == "move door 1") {
-        garage.movedoor(0);
-    } else if (line == "move door 2") {
         garage.movedoor(1);
+    } else if (line == "move door 2") {
+        garage.movedoor(2);
     }
     rl.prompt();
 }).on('SIGINT', function () {

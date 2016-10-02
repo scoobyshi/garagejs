@@ -6,7 +6,6 @@ var state = config.states;
 var debounce = 1000; // debounce helper for 1s
 
 // Setup Motor
-var doormotor = [];
 var doorlist = [];
 
 (function setMotor() {
@@ -17,7 +16,7 @@ var doorlist = [];
             doorlist[i] = config.motor[motors];
             doorlist[i].otherSensorTriggered = false;
             doorlist[i].garageCurrentState = state.CLOSED;
-            doormotor[i] = new Gpio(doorlist[i].pin, doorlist[i].status);
+            doorlist[i].doormotor = new Gpio(doorlist[i].pin, doorlist[i].status);
             console.log("Setup " + doorlist[i].name, "Motor with GPIO Pin: ", doorlist[i].pin);
             i += 1;
         });
@@ -107,19 +106,23 @@ var doorsensor = [];
 
 // Control the Door Motor
 function movedoor(door_id) {
-    console.log("Moving the ", doorlist[door_id].name, " door..");
+    function finddoor(d) {
+        return d.id === door_id;
+    }
+    var door = doorlist.find(finddoor);
+    console.log("Moving the ", door.name, " door..");
 
     setTimeout(function () {
-        doormotor[door_id].write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
+        door.doormotor.write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
     }, 2000);
-    doormotor[door_id].write(0); // This will be executed first, to trigger relay
+    door.doormotor.write(0); // This will be executed first, to trigger relay
 }
 
 function cleanup() {
     console.log("Cleaning up and Stopping...");
 
-    doormotor.forEach(function (motors) {
-        motors.unexport();
+    doorlist.forEach(function (motors) {
+        motors.doormotor.unexport();
     });
     doorsensor.forEach(function (sensor) {
         sensor.unexport();
@@ -130,7 +133,8 @@ function currentstate(door_id) {
     function finddoor(d) {
         return d.id === door_id;
     }
-    console.log(doorlist.find(finddoor));
+    var door = doorlist.find(finddoor);
+    console.log("ID ", door.id, " current state ", door.garageCurrentState.desc);
 
     return doorlist[door_id].garageCurrentState;
 }
