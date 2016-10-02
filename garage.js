@@ -4,7 +4,6 @@ var email = require('./lib/mailer');
 var camera = require('./lib/picture');
 var state = config.states;
 var debounce = 1000; // debounce helper for 1s
-var garageCurrentState = state.CLOSED;
 
 // Setup Motor
 var doormotor = [];
@@ -107,13 +106,13 @@ var doorsensor = [];
 }());
 
 // Control the Door Motor
-function movedoor(side) {
-    console.log("Moving the ", doorlist[side].name, " door..");
+function movedoor(door_id) {
+    console.log("Moving the ", doorlist[door_id].name, " door..");
 
     setTimeout(function () {
-        doormotor[side].write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
+        doormotor[door_id].write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
     }, 2000);
-    doormotor[side].write(0); // This will be executed first, to trigger relay
+    doormotor[door_id].write(0); // This will be executed first, to trigger relay
 }
 
 function cleanup() {
@@ -127,8 +126,8 @@ function cleanup() {
     });
 }
 
-function currentstate() {
-    return garageCurrentState;
+function currentstate(door_id) {
+    return doorlist[door_id].garageCurrentState;
 }
 
 exports.currentstate = currentstate;
