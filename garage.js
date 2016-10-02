@@ -136,10 +136,21 @@ function currentstate(door_id) {
     var door = doorlist.find(finddoor);
     console.log("ID ", door.id, " current state ", door.garageCurrentState.desc);
 
-    return doorlist[door_id].garageCurrentState;
+    return door.garageCurrentState;
+}
+
+function doors() {
+    var doorLookup = [];
+    var i = 0;
+    doorlist.forEach(function (d) {
+        doorLookup[i] = d.id;
+        i += 1;
+    });
+    return doorLookup;
 }
 
 exports.currentstate = currentstate;
 exports.movedoor = movedoor;
 exports.cleanup = cleanup;
 exports.doorlist = doorlist;
+exports.doors = doors;

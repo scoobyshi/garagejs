@@ -6,8 +6,8 @@ const rl = readline.createInterface(process.stdin, process.stdout);
 console.log("Starting up and Waiting... ");
 
 console.log("Available Doors:");
-garage.doorlist.forEach(function (door) {
-    console.log("Door ID " + door.id + ", use the name \"" + door.name + "\" to control the door on Pin: " + door.pin);
+garage.doors.forEach(function (door) {
+    console.log("Door ID " + door);
 });
 
 console.log("Commands:");
@@ -24,8 +24,8 @@ rl.on('line', function (line) {
     }
     rl.prompt();
 }).on('SIGINT', function () {
-    garage.doorlist.forEach(function (door) {
-        console.log("Door ID " + door.id + " has status " + door.garageCurrentState.desc);
+    garage.doors.forEach(function (door) {
+        console.log("Door ID " + door + " has status " + garage.currentstate(door).desc);
     });
 
     garage.currentstate(1);
