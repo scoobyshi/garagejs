@@ -8,18 +8,18 @@
       "status": "high",
       "sensors": [
         {
-          "position": "top",
-          "pin": 25,
-          "type": "in",
-          "edge": "falling",
-          "debounce": 400
-        },
-        {
           "position": "bottom",
           "pin": 8,
           "type": "in",
           "edge": "falling",
           "debounce": 200
+        },
+        {
+          "position": "top",
+          "pin": 25,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 400
         }
       ]
     },
