@@ -3,6 +3,7 @@ var config = require('./config');
 var email = require('./lib/mailer');
 var camera = require('./lib/picture');
 var state = config.states;
+var debounce = 1000; // debounce helper for 1s
 var garageCurrentState = state.CLOSED;
 
 // Setup Motor
@@ -71,7 +72,7 @@ var doorsensor = [];
                     console.log("Using debounce helper and checking time, current time: ", doorlist[motor].currenttime, " versus last change time: ", doorlist[motor].lastchangetime);
                     console.log("Difference is: ", doorlist[motor].currenttime - doorlist[motor].lastchangetime, "ms");
 
-                    if ((doorlist[motor].currenttime - doorlist[motor].lastchangetime) >= 500) {
+                    if ((doorlist[motor].currenttime - doorlist[motor].lastchangetime) >= debounce) {
 
                         // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
                         if (value == false) {
