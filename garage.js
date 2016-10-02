@@ -134,7 +134,6 @@ function currentstate(door_id) {
         return d.id === door_id;
     }
     var door = doorlist.find(finddoor);
-    console.log("ID ", door.id, " current state ", door.garageCurrentState.desc);
 
     return door.garageCurrentState;
 }
