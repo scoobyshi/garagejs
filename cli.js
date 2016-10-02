@@ -14,7 +14,7 @@ console.log("Commands:");
 console.log("  move door <id>");
 console.log("  check door <id>");
 
-rl.setPrompt('Enter Command or Ctrl-C to exit>');
+rl.setPrompt("Enter Command or Ctrl-C to exit>");
 rl.prompt();
 rl.on('line', function(line) {
   if (line == "move door 1") {
@@ -24,6 +24,9 @@ rl.on('line', function(line) {
   }
   rl.prompt();
 }).on('SIGINT', function() {
+  garage.doorlist.forEach(function (door) {
+    console.log("Door ID " + door.id + " has status " + door.garageCurrentState.desc);
+  });
   garage.cleanup();  
   process.exit(0);
 });

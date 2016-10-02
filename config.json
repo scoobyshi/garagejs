@@ -9,7 +9,7 @@
       "sensors": [
         {
           "position": "bottom",
-          "pin": 8,
+          "pin": 7,
           "type": "in",
           "edge": "falling",
           "debounce": 200
