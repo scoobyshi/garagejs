@@ -67,7 +67,7 @@ var doorsensor = [];
                         throw err;
                     }
 
-                    // debounce helper - confirm we're not seeing another change within less than half a second (500ms), measured in ms
+                    // debounce helper - confirm we're not seeing another change within some set amount of time
                     doorlist[motor].currenttime = new Date();
                     console.log("Using debounce helper and checking time, current time: ", doorlist[motor].currenttime, " versus last change time: ", doorlist[motor].lastchangetime);
                     console.log("Difference is: ", doorlist[motor].currenttime - doorlist[motor].lastchangetime, "ms");
@@ -78,9 +78,6 @@ var doorsensor = [];
                         if (value == false) {
                             console.log("Triggered Sensor ", sens.position, " on pin", sens.pin, " on motor", config.motor[motor].name, " at", new Date());
 
-                            // if doorlist[motor] / motor.otherSensorTriggered,
-                            // OR more explicitly if motor.sensor.top active or motor.sensor.bottom active?
-                            // garagecurrentstate[motor] to manage state for each?
                             if (doorlist[motor].otherSensorTriggered == true) {
 
                                 // if Top sensor (0) triggered and Other previous, then must be Closed
