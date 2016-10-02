@@ -7,7 +7,7 @@ console.log("Starting up and Waiting... ");
 
 console.log("Available Doors:");
 garage.doorlist.forEach(function (door) {
-  console.log("Door ID " + door.id + ", use the name \"" + door.name + "\" to control the door on Pin: " + door.pin);
+    console.log("Door ID " + door.id + ", use the name \"" + door.name + "\" to control the door on Pin: " + door.pin);
 });
 
 console.log("Commands:");
@@ -16,17 +16,20 @@ console.log("  check door <id>");
 
 rl.setPrompt("Enter Command or Ctrl-C to exit>");
 rl.prompt();
-rl.on('line', function(line) {
-  if (line == "move door 1") {
-    garage.movedoor(0);
-  } else if (line == "move door 2") {
-    garage.movedoor(1);
-  }
-  rl.prompt();
-}).on('SIGINT', function() {
-  garage.doorlist.forEach(function (door) {
-    console.log("Door ID " + door.id + " has status " + door.garageCurrentState.desc);
-  });
-  garage.cleanup();  
-  process.exit(0);
+rl.on('line', function (line) {
+    if (line == "move door 1") {
+        garage.movedoor(0);
+    } else if (line == "move door 2") {
+        garage.movedoor(1);
+    }
+    rl.prompt();
+}).on('SIGINT', function () {
+    garage.doorlist.forEach(function (door) {
+        console.log("Door ID " + door.id + " has status " + door.garageCurrentState.desc);
+    });
+
+    garage.currentstate(1);
+
+    garage.cleanup();
+    process.exit(0);
 });

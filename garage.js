@@ -127,6 +127,11 @@ function cleanup() {
 }
 
 function currentstate(door_id) {
+    function finddoor(d) {
+        return d.id === door_id;
+    }
+    console.log(doorlist.find(finddoor));
+
     return doorlist[door_id].garageCurrentState;
 }
 
