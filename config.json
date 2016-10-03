@@ -1,64 +1,82 @@
 {
-  "motor": {
-    "left": {
+  "motor": [
+    {
       "id": 1,
       "name": "left",
       "location_type": "left-side",
       "pin": 24,
-      "status": "high"
+      "status": "high",
+      "sensors": [
+        {
+          "position": "bottom",
+          "pin": 7,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 200
+        },
+        {
+          "position": "top",
+          "pin": 25,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 400
+        }
+      ]
     },
-    "right": {
+    {
       "id": 2,
       "name": "right",
       "location_type": "right-side",
       "pin": 18,
-      "status": "high"
+      "status": "high",
+      "sensors": [
+        {
+          "position": "top",
+          "pin": 23,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 400
+        },
+        {
+          "position": "bottom",
+          "pin": 17,
+          "type": "in",
+          "edge": "falling",
+          "debounce": 200
+        }
+      ]
     }
-  },
+  ],
   "camera": {
     "enable": 1
   },
   "mail": {
     "enable": 1
   },
-  "sensors": {
-    "topsensor": {
-      "pin": 25,
-      "type": "in",
-      "edge": "falling",
-      "debounce": 400
-    },
-    "bottomsensor": {
-      "pin": 8,
-      "type": "in",
-      "edge": "falling",
-      "debounce": 200
-    }
-  },
   "states": {
     "OPEN": {
-	"value": 0,
-	"desc": "Open"
+      "value": 0,
+      "desc": "Open"
     },
     "CLOSED": {
-	"value": 1,
-	"desc": "Closed"
+      "value": 1,
+      "desc": "Closed"
     },
     "UNKNOWN": {
-	"value": 5,
-	"desc": "Unknown"
+      "value": 5,
+      "desc": "Unknown"
     },
     "OPENING": {
-	"value": 2,
-	"desc": "Opening"
+      "value": 2,
+      "desc": "Opening"
     },
     "CLOSING": {
-	"value": 3,
-	"desc": "Closing"
+      "value": 3,
+      "desc": "Closing"
     },
     "STATIONARY": {
-	"value": 4,
-	"desc": "Stopped"
+      "value": 4,
+      "desc": "Stopped"
     }
   }
 }
