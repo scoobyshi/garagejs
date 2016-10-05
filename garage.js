@@ -90,6 +90,15 @@ var doorsensor = [];
                                 doorlist[motor].garageCurrentState = (sens.position === "top") ? state.CLOSING : state.OPENING;
                                 doorlist[motor].otherSensorTriggered = true;
                                 console.log(doorlist[motor].name, "garage changing state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
+
+                                setTimeout(function() {
+                                    if (doorlist[motor].garageCurrentState === state.CLOSING || doorlist[motor].garageCurrentState === state.OPENING) {
+                                        console.log("Door is still ", doorlist[motor].garageCurrentState.desc);
+                                    } else {
+                                        console.log("Door is confirmed ", doorlist[motor].garageCurrentState.desc);
+                                    }
+                                },60000);
+
                             }
 
                             doorlist[motor].lastchangetime = new Date();
