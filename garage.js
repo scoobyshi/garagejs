@@ -3,6 +3,7 @@ var config = require('./config');
 var email = require('./lib/mailer');
 var camera = require('./lib/picture');
 var state = config.states;
+var defaultState = state.CLOSED;
 var debounce = 1000; // debounce helper for 1s
 
 // Setup Motor
@@ -15,7 +16,7 @@ var doorlist = [];
         Object.keys(config.motor).forEach(function (motors) {
             doorlist[i] = config.motor[motors];
             doorlist[i].otherSensorTriggered = false;
-            doorlist[i].garageCurrentState = state.CLOSED;
+            doorlist[i].garageCurrentState = defaultState;
             doorlist[i].doormotor = new Gpio(doorlist[i].pin, doorlist[i].status);
             console.log("Setup " + doorlist[i].name, "Motor with GPIO Pin: ", doorlist[i].pin);
             i += 1;
@@ -93,11 +94,13 @@ var doorsensor = [];
 
                                 setTimeout(function() {
                                     if (doorlist[motor].garageCurrentState === state.CLOSING || doorlist[motor].garageCurrentState === state.OPENING) {
-                                        console.log("Door is still ", doorlist[motor].garageCurrentState.desc);
+                                        console.log("Door is still ", doorlist[motor].garageCurrentState.desc, " resetting to default.");
+                                        doorlist[motor].garageCurrentState = defaultState;
+                                        doorlist[motor].otherSensorTriggered = false;
                                     } else {
                                         console.log("Door is confirmed ", doorlist[motor].garageCurrentState.desc);
                                     }
-                                },60000);
+                                },120000);
 
                             }
 
