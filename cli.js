@@ -1,9 +1,10 @@
 var garage = require('./garage.js');
 const readline = require('readline');
 const rl = readline.createInterface(process.stdin, process.stdout);
+var logger = require('./lib/logger');
 
 // Provide a CLI
-console.log("Starting up and Waiting... ");
+logger.info("Starting up and Waiting... ");
 
 console.log("Available Doors:");
 garage.doors().forEach(function (door) {
@@ -25,7 +26,7 @@ rl.on('line', function (line) {
     rl.prompt();
 }).on('SIGINT', function () {
     garage.doors().forEach(function (door) {
-        console.log("Door ID " + door + " has status " + garage.currentstate(door).desc);
+        logger.debug("Door ID " + door + " has status " + garage.currentstate(door).desc);
     });
 
     garage.cleanup();

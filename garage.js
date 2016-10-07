@@ -2,6 +2,7 @@ var Gpio = require('onoff').Gpio;
 var config = require('./config');
 var email = require('./lib/mailer');
 var camera = require('./lib/picture');
+var logger = require('./lib/logger');
 var state = config.states;
 var defaultState = state.CLOSED;
 var debounce = 1000; // debounce helper for 1s
@@ -18,7 +19,7 @@ var doorlist = [];
             doorlist[i].otherSensorTriggered = false;
             doorlist[i].garageCurrentState = defaultState;
             doorlist[i].doormotor = new Gpio(doorlist[i].pin, doorlist[i].status);
-            console.log("Setup " + doorlist[i].name, "Motor with GPIO Pin: ", doorlist[i].pin);
+            logger.debug("Setup " + doorlist[i].name, "Motor with GPIO Pin: ", doorlist[i].pin);
             i += 1;
         });
         sendNotification("1L: Garage Setup and Ready");
@@ -32,7 +33,7 @@ function sendNotification(subject) {
     if (config.mail.enable) {
         if (config.camera.enable) {
             setTimeout(function () {
-                console.log("Available Filename: " + file);
+                logger.debug("Available Filename: " + file);
                 email.sendingMail(subject, file);
             }, 5000);
             file = camera.takePicture();
@@ -40,7 +41,7 @@ function sendNotification(subject) {
             email.sendingMail(subject, file);
         }
     } else {
-        console.log("No Email Notification Subscribed!");
+        logger.warn("No Email Notification Subscribed!");
     }
 }
 
@@ -57,7 +58,7 @@ var doorsensor = [];
             Object.keys(config.motor[motor].sensors).forEach(function (sensor) {
 
                 var sens = config.motor[motor].sensors[sensor];
-                console.log("Setup sensor ", sens.position, " on pin", sens.pin, " for motor", config.motor[motor].name);
+                logger.debug("Setup sensor ", sens.position, " on pin", sens.pin, " for motor", config.motor[motor].name);
 
                 doorsensor[i] = new Gpio(sens.pin, sens.type, sens.edge, {debounceTimeout: sens.debounce});
                 doorsensor[i].watch(function (err, value) {
@@ -68,21 +69,21 @@ var doorsensor = [];
 
                     // debounce helper - confirm we're not seeing another change within some set amount of time
                     doorlist[motor].currenttime = new Date();
-                    console.log("Using debounce helper and checking time, current time: ", doorlist[motor].currenttime, " versus last change time: ", doorlist[motor].lastchangetime);
-                    console.log("Difference is: ", doorlist[motor].currenttime - doorlist[motor].lastchangetime, "ms");
+                    logger.debug("Using debounce helper and checking time, current time: ", doorlist[motor].currenttime, " versus last change time: ", doorlist[motor].lastchangetime);
+                    logger.debug("Difference is: ", doorlist[motor].currenttime - doorlist[motor].lastchangetime, "ms");
 
                     if ((doorlist[motor].currenttime - doorlist[motor].lastchangetime) >= debounce) {
 
                         // when false, indicates a "falling" edge, which in turn indicates a magnet passing and a genuine event
                         if (value == false) {
-                            console.log("Triggered Sensor ", sens.position, " on pin", sens.pin, " on motor", config.motor[motor].name, " at", new Date());
+                            logger.debug("Triggered Sensor ", sens.position, " on pin", sens.pin, " on motor", config.motor[motor].name, " at", new Date());
 
                             if (doorlist[motor].otherSensorTriggered == true) {
 
                                 // if Top sensor (0) triggered and Other previous, then must be Closed
                                 doorlist[motor].garageCurrentState = (sens.position === "top") ? state.OPEN : state.CLOSED;
                                 doorlist[motor].otherSensorTriggered = false;
-                                console.log(doorlist[motor].name, "garage current state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
+                                logger.info(doorlist[motor].name, "garage current state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
 
                                 sendNotification("1L: The " + doorlist[motor].name + " garage door is now " + doorlist[motor].garageCurrentState.desc);
                             } else {
@@ -90,15 +91,15 @@ var doorsensor = [];
                                 // if top sensor (0) then Closing, if bottom (1) then Opening; By knowing which sensor is triggered first we can recover from unknown state
                                 doorlist[motor].garageCurrentState = (sens.position === "top") ? state.CLOSING : state.OPENING;
                                 doorlist[motor].otherSensorTriggered = true;
-                                console.log(doorlist[motor].name, "garage changing state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
+                                logger.info(doorlist[motor].name, "garage changing state is ", doorlist[motor].garageCurrentState.desc, " at", new Date());
 
                                 setTimeout(function() {
                                     if (doorlist[motor].garageCurrentState === state.CLOSING || doorlist[motor].garageCurrentState === state.OPENING) {
-                                        console.log("Door is still ", doorlist[motor].garageCurrentState.desc, " resetting to default.");
+                                        logger.debug("Door is still ", doorlist[motor].garageCurrentState.desc, " resetting to default.");
                                         doorlist[motor].garageCurrentState = defaultState;
                                         doorlist[motor].otherSensorTriggered = false;
                                     } else {
-                                        console.log("Door is confirmed ", doorlist[motor].garageCurrentState.desc);
+                                        logger.debug("Door is confirmed ", doorlist[motor].garageCurrentState.desc);
                                     }
                                 },120000);
 
@@ -121,7 +122,7 @@ function movedoor(door_id) {
         return d.id === door_id;
     }
     var door = doorlist.find(finddoor);
-    console.log("Moving the ", door.name, " door..");
+    logger.debug("Moving the ", door.name, " door..");
 
     setTimeout(function () {
         door.doormotor.write(1); // After a 2 second pause, reset the pin to 1/High, allowing time to relay signal to motor.
@@ -130,7 +131,7 @@ function movedoor(door_id) {
 }
 
 function cleanup() {
-    console.log("Cleaning up and Stopping...");
+    logger.info("Cleaning up and Stopping...");
 
     doorlist.forEach(function (motors) {
         motors.doormotor.unexport();
